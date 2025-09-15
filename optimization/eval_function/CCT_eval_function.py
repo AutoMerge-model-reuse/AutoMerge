@@ -4,16 +4,7 @@ import os
 import json
 
 def calculate_dynamic_weighted_score(scenarios_scores, alpha=1.0):
-    """
-    计算动态加权总分，根据每个任务的评分表现动态调整权重。
 
-    参数:
-    scenarios_scores: 一个列表或数组，包含每个场景的评分。
-    alpha: 调整因子，控制权重调整的灵敏度。
-
-    return:
-    总分（float类型）
-    """
     min_score = np.min(scenarios_scores)
     max_score = np.max(scenarios_scores)
 
@@ -37,12 +28,7 @@ def calculate_dynamic_weighted_score(scenarios_scores, alpha=1.0):
     return total_score
 
 def single_task_val_function(model_path: str, task: str) -> float:
-    """
-    执行单任务验证函数
-    :param model_path: 模型路径
-    :param task: 任务名称，i.e., 'front', 'back'    
-    :return: 验证分数
-    """
+   
     python_path = "/home/ubuntu/.conda/envs/cct/bin/python"
     
     # create the eval command along with the model_path annd task
@@ -60,7 +46,7 @@ def single_task_val_function(model_path: str, task: str) -> float:
     result_path = f"/mnt/zjy/model_merging/mergekit/optimization/scores/CCT_scores/eval_{task}_result.json"
     
     with open(result_path, "r", encoding="utf-8") as f:
-        data = json.load(f)   # 读取成 Python 字典
+        data = json.load(f)  
 
     top5 = data["top5_accuracy"]
     

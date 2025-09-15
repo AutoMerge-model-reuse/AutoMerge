@@ -44,16 +44,12 @@ def clean_data(obj):
     return obj
 
 def get_gpu_peak_memory(device_index=3):
-    """
-    获取运行期间 GPU 显存峰值（MB）
-    需要 pynvml 库: pip install nvidia-ml-py3
-    """
     pynvml.nvmlInit()
     handle = pynvml.nvmlDeviceGetHandleByIndex(device_index)
     info = pynvml.nvmlDeviceGetMemoryInfo(handle)
     return info.used / 1024**2  # MB
 
-# ================= GPU 显存监控 =================
+
 class GPUMonitor:
     def __init__(self, device_index=0, interval=1.0, csv_path="gpu_usage.csv", fig_path="gpu_usage.png"):
         self.device_index = device_index
@@ -97,30 +93,8 @@ class GPUMonitor:
             writer.writerow(["Time(s)", "Memory_Used(MB)", "GPU_Utilization(%)", "GPU_Temperature(C)"])
             for t, m, u, temp in zip(self.timestamps, self.memory_usage, self.gpu_utilization, self.gpu_temperature):
                 writer.writerow([t, m, u, temp])
-        print(f"显存采样结果已保存到 {self.csv_path}")
+        print(f"GPU result save to {self.csv_path}")
 
-    def save_plot(self):
-        plt.figure(figsize=(8, 6))
-        plt.subplot(2, 1, 1)
-        plt.plot(self.timestamps, self.memory_usage, marker='o', linewidth=2)
-        plt.xlabel("Time (s)")
-        plt.ylabel("GPU Memory Used (MB)")
-        plt.title(f"GPU {self.device_index} Memory Usage Over Time")
-        plt.grid(True)
-
-        plt.subplot(2, 1, 2)
-        plt.plot(self.timestamps, self.gpu_utilization, marker='o', color='orange', linewidth=2, label="GPU Utilization")
-        plt.plot(self.timestamps, self.gpu_temperature, marker='o', color='red', linewidth=2, label="GPU Temperature")
-        plt.xlabel("Time (s)")
-        plt.ylabel("GPU Utilization (%) / Temperature (°C)")
-        plt.title(f"GPU {self.device_index} Utilization and Temperature Over Time")
-        plt.legend()
-        plt.grid(True)
-
-        plt.tight_layout()
-        plt.savefig(self.fig_path)
-        plt.close()
-        print(f"显存变化曲线已保存到 {self.fig_path}")
 
 
 class CCT_Merge:
@@ -177,7 +151,7 @@ class CCT_Merge:
         
         with open(self.backbone_yaml_file, 'w') as file:
             yaml.dump(cleaned_config, file, default_flow_style=False, allow_unicode=True)
-        print(f"更新的合并参数已保存到 {self.backbone_yaml_file}")
+        print(f"update configuration {self.backbone_yaml_file}")
         
         command = ['mergekit-pytorch', self.backbone_yaml_file, self.bb_out_path]
         try:
@@ -212,7 +186,7 @@ class CCT_Merge:
         cleaned_config = clean_data(transformer_temp_config)
         with open(self.transformer_yaml_file, 'w') as file:
             yaml.dump(cleaned_config, file, default_flow_style=False, allow_unicode=True)
-        print(f"更新的合并参数已保存到 {self.transformer_yaml_file}")
+        print(f"update configuration {self.transformer_yaml_file}")
         
         command = ['mergekit-pytorch', self.transformer_yaml_file, self.tf_out_path]
         try:
@@ -225,13 +199,12 @@ class CCT_Merge:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
-        print(f"模型分块合并完成，输出路径为 {self.bb_out_path} 和 {self.tf_out_path}，开始聚合")
         aggregation_and_save_weights(
             backbone_weights_path=self.bb_out_path+'/model.safetensors',
             other_weights_path=self.tf_out_path+'/model.safetensors',
             output_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/model.pth"
         )
-        print("模型聚合完成，开始评估")
+
         score = self.score_function(
             model_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/model.pth",
             tasks=["front", "back"]
@@ -239,10 +212,10 @@ class CCT_Merge:
         return 1 - score
 
 if __name__ == "__main__":
-    # ====== 计时开始 ======
+
     start_time = time.time()
 
-    # ====== 初始化 GPU 监控 ======
+
     monitor = GPUMonitor(device_index=3, interval=1.0)
     monitor.start()
     
@@ -261,7 +234,7 @@ if __name__ == "__main__":
     smac = HPOFacade(
         scenario,
         merge.train,
-        initial_design=None,  # 可以设置初始设计
+        initial_design=None, 
         overwrite=True,
     )
     
@@ -273,11 +246,6 @@ if __name__ == "__main__":
 
     end_time = time.time()
     total_time = end_time - start_time
-
-    print(f"\n程序运行总时间: {total_time:.2f} 秒")
-    print(f"GPU 显存占用峰值: {max(monitor.memory_usage):.2f} MB")
-    print(f"GPU 利用率峰值: {max(monitor.gpu_utilization):.2f} %")
-    print(f"GPU 温度峰值: {max(monitor.gpu_temperature)} °C")
     
-    # 保存结果
+    # save GPU result
     monitor.save_csv()

@@ -1,7 +1,4 @@
-'''
-LLM 合并参数空间定义
-merge method, weight, density A, density B
-'''
+
 import yaml
 from ConfigSpace import (
     Categorical,
@@ -21,7 +18,7 @@ import numpy as np
 
 def clean_data(obj):
     if isinstance(obj, np.generic):
-        return obj.item()  # 转换为普通类型（例如 int 或 float）
+        return obj.item()  
     elif isinstance(obj, list):
         return [clean_data(item) for item in obj]
     elif isinstance(obj, dict):
@@ -50,7 +47,7 @@ class LLM_merge:
         return cs
     
     def train(self, config: Configuration, seed: int = 0) -> float:
-        # 根据变化的参数修改 config 并存入 yaml 文件用于合并
+
         config_dict = dict(config)
         weightA = config_dict["weight"]
         weightB = 1.0 - weightA
@@ -70,17 +67,16 @@ class LLM_merge:
             "dtype": self.base_config["dtype"],
         }
         cleaned_config = clean_data(temp_config)
-        # 将临时配置写入 yaml 文件中
+
         with open(self.yaml_file, 'w') as file:
             yaml.dump(cleaned_config, file, default_flow_style=False, allow_unicode=True)
-        print(f"更新的合并参数已保存到 {self.yaml_file}")
+
         
         command = ['mergekit-pytorch', self.yaml_file, self.out_path]
         try:
-            # 使用 subprocess.run 来执行命令，并等待其完成
+
             result = subprocess.run(command, check=True, text=True, capture_output=True)
 
-            # 打印命令的输出
             print("Command output:", result.stdout)
             print("Command error (if any):", result.stderr)
         except subprocess.CalledProcessError as e:

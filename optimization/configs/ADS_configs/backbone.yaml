@@ -1,0 +1,14 @@
+base_model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/base/backbone_weights.pth
+dtype: bfloat16
+merge_method: ties
+models:
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/taskA/backbone_weights.pth
+  parameters:
+    density: 0.5299207921426
+    weight: 0.5193036109144
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/taskB/backbone_weights.pth
+  parameters:
+    density: 0.5283645708657
+    weight: 0.4806963890856
+parameters:
+  normalize: true

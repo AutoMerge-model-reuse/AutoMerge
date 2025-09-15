@@ -1,0 +1,14 @@
+base_model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/base/other_weights.pth
+dtype: bfloat16
+merge_method: ties
+models:
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskA/other_weights.pth
+  parameters:
+    density: 0.7996683949605
+    weight: 0.9454910485074
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskB/other_weights.pth
+  parameters:
+    density: 0.6072843717411
+    weight: 0.054508951492600044
+parameters:
+  normalize: true

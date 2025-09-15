@@ -1,0 +1,8 @@
+backbone_density_A: 1
+backbone_density_B: 1
+backbone_merge_method: 'task_arithmetic'
+backbone_weight: 0.0846299938858
+transformer_density_A: 0.9462781869806
+transformer_density_B: 0.514367078431
+transformer_merge_method: 'task_arithmetic'
+transformer_weight: 0.0789451068267

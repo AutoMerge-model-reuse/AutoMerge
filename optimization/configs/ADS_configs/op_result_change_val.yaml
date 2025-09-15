@@ -1,0 +1,9 @@
+# 对损失函数以及权重动态调整策略进行修改后的结果
+backbone_density_A: 0.6835162756033
+backbone_density_B: 0.9219049159437
+backbone_merge_method: task_arithmetic
+backbone_weight: 0.5606785314158
+transformer_density_A: 0.8602056638338
+transformer_density_B: 0.9430217253976
+transformer_merge_method: task_arithmetic
+transformer_weight: 0.3978165863082

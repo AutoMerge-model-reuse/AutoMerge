@@ -1,0 +1,4 @@
+backbone_merge_method: ties
+backbone_weight: 0.8067554563234
+transformer_merge_method: dare_ties
+transformer_weight: 0.2406489983797

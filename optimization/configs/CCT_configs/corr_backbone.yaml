@@ -1,0 +1,15 @@
+# model 均为本地模型权重的路径
+models:
+  - model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskA/backbone_weights.pth
+    parameters:
+      density: 1
+      weight: 0.5
+  - model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskB/backbone_weights.pth
+    parameters:
+      density: 1
+      weight: 0.5
+merge_method: ties
+base_model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/base/backbone_weights.pth
+parameters:
+  normalize: true
+dtype: bfloat16

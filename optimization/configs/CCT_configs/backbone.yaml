@@ -1,0 +1,14 @@
+base_model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/base/backbone_weights.pth
+dtype: bfloat16
+merge_method: task_arithmetic
+models:
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskA/backbone_weights.pth
+  parameters:
+    density: 0.9048200407997
+    weight: 0.2997538726777
+- model: /mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/taskB/backbone_weights.pth
+  parameters:
+    density: 0.7894917442463
+    weight: 0.7002461273223
+parameters:
+  normalize: true

@@ -11,6 +11,7 @@ This repository contains code for the paper AutoMerge: Search-Based Model Mergin
 This project requires multiple environments. It is recommended to use **conda** or **venv** for environment management.  
 
 ### 1.1 AutoMerge Environment
+
 The AutoMerge environment is created from `requirements.txt`:
 
 ```bash
@@ -20,6 +21,7 @@ pip install -r requirements.txt
 ```
 
 ### 1.2 InterFuser Environment
+
 Navigate to the `InterFuser/` directory and follow its `README.md` for environment setup:
 
 ```bash
@@ -27,7 +29,16 @@ cd InterFuser
 # Follow the instructions in InterFuser/README.md
 ```
 
+To conduct testing in the CARLA simulation environment, we also need to configure the CARLA environment. Download and setup CARLA 0.9.10.1
+
+```Shell
+chmod +x setup_carla.sh
+./setup_carla.sh
+easy_install carla/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
+```
+
 ### 1.3 CCT Environment
+
 Navigate to the `Compact-Transformers/` directory and follow its `README.md` for environment setup:
 
 ```bash
@@ -42,6 +53,7 @@ cd Compact-Transformers
 `mergekit` is a tool for merging models. This repository supports merging both Hugging Face models and local PyTorch models.
 
 ### 2.1 Merging Models from Hugging Face
+
 1. Make sure the `AutoMerge` environment is active.  
 2. Run the following command to merge two or more Hugging Face models:
 
@@ -53,6 +65,7 @@ mergekit-yaml example_hf_merge.yml --out-dir merged_model
 - `--out-dir` specifies the output directory for the merged model.  
 
 ### 2.2 Merging Local PyTorch Models
+
 1. Specify the paths of local PyTorch models in a YAML file.  
 2. Run:
 
@@ -72,6 +85,7 @@ mergekit-pytorch example_local_merge.yml --out-dir merged_model
 This repository contains **InterFuser** and **Compact-Transformers (CCT)** directories, which can be used to train custom source models.
 
 ### 3.1 InterFuser
+
 Navigate to the `InterFuser/` directory and follow its `README.md` for data preparation and training:
 
 ```bash
@@ -82,6 +96,7 @@ cd InterFuser
 The trained model weights can later be merged using mergekit.
 
 ### 3.2 Compact-Transformers (CCT)
+
 Navigate to the `Compact-Transformers/` directory and follow its `README.md` for training:
 
 ```bash

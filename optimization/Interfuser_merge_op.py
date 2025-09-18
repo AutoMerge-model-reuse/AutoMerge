@@ -245,11 +245,11 @@ class ADs_Merge:
         aggregation_and_save_weights(
             backbone_weights_path=self.bb_out_path+'/model.safetensors',
             other_weights_path=self.tf_out_path+'/model.safetensors',
-            output_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/merged/ADs.pth"
+            output_path="ckpts/optimization/Interfuser/merged/ADs.pth"
         )
 
         score = self.score_function(
-            model_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/merged/ADs.pth",
+            model_path="ckpts/optimization/Interfuser/merged/ADs.pth",
             tasks=["base", "taskA", "taskB"]
         )
         
@@ -263,10 +263,10 @@ if __name__ == '__main__':
     monitor.start()
     
     merge = ADs_Merge(
-        backbone_yaml_file='/mnt/zjy/model_merging/mergekit/optimization/configs/ADS_configs/backbone.yaml',
-        transformer_yaml_file='/mnt/zjy/model_merging/mergekit/optimization/configs/ADS_configs/tf.yaml',
-        bb_out_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/merged/bb",
-        tf_out_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/Interfuser/merged/tf",
+        backbone_yaml_file='optimization/configs/ADS_configs/backbone.yaml',
+        transformer_yaml_file='optimization/configs/ADS_configs/tf.yaml',
+        bb_out_path="ckpts/optimization/Interfuser/merged/bb",
+        tf_out_path="ckpts/optimization/Interfuser/merged/tf",
         score_function=val_function,
     )
     scenario = Scenario(

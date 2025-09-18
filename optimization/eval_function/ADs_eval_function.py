@@ -108,7 +108,7 @@ def replace_routes(sh_path: str, new_route: str):
         
 def single_task_eval_function(model_path: str, task: str) -> float:
     
-    update_model_path(model_path, config_file='/mnt/zjy/model_merging/ADmodels/InterFuser/leaderboard/team_code/interfuser_config.py')
+    update_model_path(model_path, config_file='InterFuser/leaderboard/team_code/interfuser_config.py')
     
     
     if task in ROUTES.keys():
@@ -116,7 +116,7 @@ def single_task_eval_function(model_path: str, task: str) -> float:
     else:
         raise ValueError(f"Unknown task: {task}. Available tasks are: {list(route.keys())}")
 
-    replace_routes(sh_path='/mnt/zjy/model_merging/ADmodels/InterFuser/leaderboard/scripts/optimize_evaluation.sh', 
+    replace_routes(sh_path='InterFuser/leaderboard/scripts/optimize_evaluation.sh', 
                    new_route=route)
     
     
@@ -129,10 +129,10 @@ def single_task_val_function(model_path: str, task: str) -> float:
     import json
     
     conda_env = "interfuser_zjy"
-    python_path = "/home/ubuntu/.conda/envs/interfuser_zjy/bin/python"
+    python_path = "your/path/to/virtualenv/bin/python"  # env for InterFuser training
     
     command = f"export LD_LIBRARY_PATH=/home/ubuntu/.conda/envs/interfuser_zjy/lib/python3.7/site-packages/nvidia/cublas/lib:$LD_LIBRARY_PATH && \
-    {python_path} /mnt/zjy/model_merging/ADmodels/InterFuser/interfuser/val.py --task {task} --ckpt_path {model_path}"
+    {python_path} InterFuser/interfuser/val.py --task {task} --ckpt_path {model_path}"
     try:
         result = subprocess.run(
             command, shell=True, check=True, text=True,
@@ -142,7 +142,7 @@ def single_task_val_function(model_path: str, task: str) -> float:
     except subprocess.CalledProcessError as e:
         print(f"Command failed with error: {e.stderr}")
     
-    result_path = f"/mnt/zjy/model_merging/mergekit/optimization/scores/validation_result_{task}.json"
+    result_path = f"optimization/scores/validation_result_{task}.json"
     with open(result_path, 'r') as json_file:
         result = json.load(json_file)
 

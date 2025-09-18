@@ -202,11 +202,11 @@ class CCT_Merge:
         aggregation_and_save_weights(
             backbone_weights_path=self.bb_out_path+'/model.safetensors',
             other_weights_path=self.tf_out_path+'/model.safetensors',
-            output_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/model.pth"
+            output_path="ckpts/optimization/CCT/merged/model.pth"
         )
 
         score = self.score_function(
-            model_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/model.pth",
+            model_path="ckpts/optimization/CCT/merged/model.pth",
             tasks=["front", "back"]
         )
         return 1 - score
@@ -220,10 +220,10 @@ if __name__ == "__main__":
     monitor.start()
     
     merge = CCT_Merge(
-        backbone_yaml_file="/mnt/zjy/model_merging/mergekit/optimization/configs/CCT_configs/backbone.yaml",
-        transformer_yaml_file="/mnt/zjy/model_merging/mergekit/optimization/configs/CCT_configs/tf.yaml",
-        bb_out_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/bb",
-        tf_out_path="/mnt/zjy/model_merging/mergekit/optimization/ckpts/CCT/merged/tf",
+        backbone_yaml_file="optimization/configs/CCT_configs/backbone.yaml",
+        transformer_yaml_file="optimization/configs/CCT_configs/tf.yaml",
+        bb_out_path="ckpts/optimization/CCT/merged/bb",
+        tf_out_path="ckpts/optimization/CCT/merged/tf",
         score_function=val_function
     )
     scenario = Scenario(

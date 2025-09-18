@@ -1,7 +1,9 @@
 # AutoMerge: Search-Based Model Merging Framework for Effective Model Reuse
 
 ![Alt text](docs/overview.jpg)
+
 This repository contains code for the paper AutoMerge: Search-Based Model Merging Framework for Effective Model Reuse. This work conducts a systematic study of model merging techniques across diverse model architectures and domains, revealing critical limitations that hinder their effectiveness for model reuse, and propose a novel search-based model merging framework that merges multiple task-specific source models to obtain a multi-task model through a training-free approach.
+
 ---
 
 ## 1. Virtual Environment Setup

@@ -36,6 +36,12 @@ def calculate_dynamic_weighted_score(scenarios_scores, alpha=1.0):
 
     return total_score
 
+def calculate_harmonic_mean(scenarios_scores):
+    reciprocal_sum = sum(1 / score for score in scenarios_scores if score != 0)  
+    harmonic_mean = len(scenarios_scores) / reciprocal_sum if reciprocal_sum != 0 else 0  
+
+    return harmonic_mean
+
 class GlobalConfig:
     """base architecture configurations"""
 

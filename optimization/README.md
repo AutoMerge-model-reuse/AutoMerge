@@ -1,18 +1,20 @@
-# 使用 SMAC 进行合并参数优化
+# Hyperparameter Optimization with SMAC
 
-## SMAC 安装
+## SMAC Installation
 
 Install swig:
+
 ```sh
 conda install gxx_linux-64 gcc_linux-64 swig
 ```
 
 Install SMAC via PyPI:
+
 ```sh
 pip install smac
 ```
 
-## 简单的 SMAC 使用示例
+## A Simple SMAC Usage Example
 
 ```py
 from ConfigSpace import Configuration, ConfigurationSpace
@@ -27,9 +29,9 @@ iris = datasets.load_iris()
 
 
 def train(config: Configuration, seed: int = 0) -> float:
-    classifier = SVC(C=config["C"], random_state=seed)
-    scores = cross_val_score(classifier, iris.data, iris.target, cv=5)
-    return 1 - np.mean(scores)
+classifier = SVC(C=config["C"], random_state=seed)
+scores = cross_val_score(classifier, iris.data, iris.target, cv=5)
+return 1 - np.mean(scores)
 
 
 configspace = ConfigurationSpace({"C": (0.100, 1000.0)})

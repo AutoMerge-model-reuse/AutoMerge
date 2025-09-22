@@ -15,6 +15,63 @@ NVIDIA CUDA specific speedups adopted from NVIDIA Apex examples
 
 Hacked together by / Copyright 2020 Ross Wightman (https://github.com/rwightman)
 """
+import pynvml
+import time
+import csv
+from datetime import datetime
+import threading
+
+# 初始化 pynvml 库
+pynvml.nvmlInit()
+
+# 设置 CSV 文件路径
+output_csv = 'gpu_stats.csv'
+
+# 写入 CSV 文件的标题行
+def write_header():
+    with open(output_csv, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['timestamp', 'gpu_id', 'memory_used_mb', 'memory_total_mb', 'gpu_utilization_percent', 'temperature_celsius'])
+
+# 记录 GPU 的状态
+def log_gpu_stats():
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # 获取设备数量
+    device_count = pynvml.nvmlDeviceGetCount()
+
+    # 遍历所有 GPU 并获取它们的状态
+    for gpu_id in range(device_count):
+        handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_id)
+        
+        # 获取 GPU 的内存使用情况
+        memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        memory_used = memory_info.used // 1024**2  # 转换为MB
+        memory_total = memory_info.total // 1024**2  # 转换为MB
+        
+        # 获取 GPU 的利用率
+        gpu_util = pynvml.nvmlDeviceGetUtilizationRates(handle).gpu
+        
+        # 获取 GPU 的温度
+        temperature = pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
+        
+        # 写入到 CSV 文件
+        with open(output_csv, 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([timestamp, gpu_id, memory_used, memory_total, gpu_util, temperature])
+
+# 每 100 秒记录一次 GPU 状态
+def monitor_gpu():
+    while True:
+        log_gpu_stats()  # 记录 GPU 状态
+        time.sleep(100)  # 每 100 秒统计一次
+
+# 在训练开始时写入表头
+write_header()
+
+# 在训练之前启动 GPU 监控线程
+gpu_monitor_thread = threading.Thread(target=monitor_gpu, daemon=True)
+gpu_monitor_thread.start()
+
 import argparse
 import time
 import yaml
@@ -30,8 +87,7 @@ import torchvision.utils
 from torch.nn.parallel import DistributedDataParallel as NativeDDP
 
 from timm.data import create_dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
-from timm.models import create_model, safe_model_name, resume_checkpoint, load_checkpoint, \
-    convert_splitbn_model, model_parameters
+from timm.models import create_model, safe_model_name, resume_checkpoint, load_checkpoint, convert_splitbn_model, model_parameters
 from timm.utils import *
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy, JsdCrossEntropy
 from timm.optim import create_optimizer_v2, optimizer_kwargs
@@ -79,6 +135,8 @@ parser.add_argument('data_dir', metavar='DIR',
                     help='path to dataset')
 parser.add_argument('--dataset', '-d', metavar='NAME', default='',
                     help='dataset type (default: ImageFolder/ImageTar if empty)')
+parser.add_argument('--class_map', metavar='NAME', default='all',
+                    help='path to class to idx mapping file (default: imagenet)')
 parser.add_argument('--train-split', metavar='NAME', default='train',
                     help='dataset train split (default: train)')
 parser.add_argument('--val-split', metavar='NAME', default='validation',
@@ -87,7 +145,7 @@ parser.add_argument('--model', default='resnet101', type=str, metavar='MODEL',
                     help='Name of model to train (default: "countception"')
 parser.add_argument('--pretrained', action='store_true', default=False,
                     help='Start with pretrained version of specified network (if avail)')
-parser.add_argument('--initial-checkpoint', default='', type=str, metavar='PATH',
+parser.add_argument('--initial_checkpoint', default='', type=str, metavar='PATH',
                     help='Initialize model from this checkpoint (default: none)')
 parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='Resume full model and optimizer state from checkpoint (default: none)')
@@ -473,12 +531,25 @@ def main():
         _logger.info('Scheduled epochs: {}'.format(num_epochs))
 
     # create the train and eval datasets
+    class_map = {}
+    if args.class_map == 'front':
+        class_map_path = '/mnt/zjy/model_merging/ADmodels/Compact-Transformers/dataset/train_maps/class_map_front_full1000_idx2cls.txt'
+        with open(class_map_path, 'r') as f:
+            for line in f:
+                idx, dict_name = line.strip().split()
+                class_map[dict_name] = int(idx)
+    else:
+        class_map_path = '/mnt/zjy/model_merging/ADmodels/Compact-Transformers/dataset/train_maps/class_map_back_full1000_idx2cls.txt'
+        with open(class_map_path, 'r') as f:
+            for line in f:
+                idx, dict_name = line.strip().split()
+                class_map[dict_name] = int(idx)
     dataset_train = create_dataset(
         args.dataset,
         root=args.data_dir, split=args.train_split, is_training=True,
-        batch_size=args.batch_size, repeats=args.epoch_repeats)
+        batch_size=args.batch_size, repeats=args.epoch_repeats, class_map=class_map)
     dataset_eval = create_dataset(
-        args.dataset, root=args.data_dir, split=args.val_split, is_training=False, batch_size=args.batch_size)
+        args.dataset, root=args.data_dir, split=args.val_split, is_training=False, batch_size=args.batch_size, class_map=class_map)
 
     # setup mixup / cutmix
     collate_fn = None

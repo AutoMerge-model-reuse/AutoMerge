@@ -123,7 +123,53 @@ AutoMerge/
 
 ---
 
-## 5. Acknowledgments
+## 5. Evaluation
+
+To evaluate the performance of the merged models, we conduct evaluations across three different model types: LLM (Large Language Models), CCT (Compact-Transformers), and InterFuser. Each model type is evaluated using its specific evaluation framework.
+
+### 5.1 LLM Evaluation
+
+For Large Language Models (LLM), we use the **bigcode-evaluation-harness** library, which allows us to assess two key aspects of model performance:
+
+1. **Coding Ability**: Evaluates the model's capability to generate correct and efficient code for a given task.
+2. **Instruction Following**: Evaluates the model’s performance in understanding and executing user instructions accurately.
+
+### CCT Evaluation
+
+For Compact-Transformers (CCT), we evaluate the model’s performance on the ImageNet task using pre-defined configuration files. The evaluation process involves loading the corresponding fine-tuned CCT configuration file and running it through the evaluation script.
+
+To evaluate a CCT model, use one of the following configuration files depending on the task:
+
+Task A: Use the Compact-Transformers/configs/finetuned/cct_14-7x2_imagenet_taskA.yml
+
+Task B: Use the Compact-Transformers/configs/finetuned/cct_14-7x2_imagenet_taskB.yml
+
+### InterFuser Evaluation
+
+For InterFuser, we evaluate its performance in various simulation scenarios. InterFuser models are assessed using different evaluation routes available in the InterFuser/leaderboard/data/evaluation_routes directory. These routes represent different testing environments and scenarios.
+
+To evaluate the InterFuser model, follow the instructions in the InterFuser/README.md for preparing and setting up the evaluation environment.
+
+## 6. AutoMerge
+
+Using the AutoMerge method to merge three different models involves running the {model_name}_merge_op.py script in the optimization directory. The final output of the script will be in the following format:
+
+'''
+Best configuration found: Configuration(values={
+  'backbone_density_A': <value>,
+  'backbone_density_B': <value>,
+  'backbone_merge_method': <method>,
+  'backbone_weight': <weight>,
+  'transformer_density_A': <value>,
+  'transformer_density_B': <value>,
+  'transformer_merge_method': <method>,
+  'transformer_weight': <weight>,
+})
+'''
+
+These parameters should then be passed as input into the modulizing_merge.py script to generate the merged model. Afterward, you can use the previously outlined evaluation methods to assess the performance of the merged model.
+
+## 7. Acknowledgments
 
 - [mergekit](https://github.com/arcee-ai/mergekit)  
 - [InterFuser](https://github.com/opendilab/InterFuser)  

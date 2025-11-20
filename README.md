@@ -154,7 +154,8 @@ To evaluate the InterFuser model, follow the instructions in the InterFuser/READ
 
 Using the AutoMerge method to merge three different models involves running the {model_name}_merge_op.py script in the optimization directory. The final output of the script will be in the following format:
 
-'''
+```pgsql
+
 Best configuration found: Configuration(values={
   'backbone_density_A': <value>,
   'backbone_density_B': <value>,
@@ -165,7 +166,8 @@ Best configuration found: Configuration(values={
   'transformer_merge_method': <method>,
   'transformer_weight': <weight>,
 })
-'''
+
+```
 
 These parameters should then be passed as input into the modulizing_merge.py script to generate the merged model. Afterward, you can use the previously outlined evaluation methods to assess the performance of the merged model.
 
